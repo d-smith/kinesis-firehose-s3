@@ -1,0 +1,178 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Create a firehose and bucket to back up a kinesis stream
+
+Parameters:
+  FirehoseName:
+    Type: String
+    Description: Delivery stream name
+  KinesisStreamName: 
+    Type: String
+    Description: Source stream arn
+  ArchiveBucket:
+    Type: String
+    Description: Bucket name to write stream archive to
+ 
+Resources:
+
+      
+  StreamReaderRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: StreamReaderRole
+#      ManagedPolicyArns:
+#        - white list
+#        - black list
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: firehose.amazonaws.com
+          Action: ['sts:AssumeRole']
+          Condition:
+            StringEquals:
+              'sts:ExternalId': !Ref 'AWS::AccountId'
+      Path: /
+
+  BucketWriterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: BucketWriterRole
+#      ManagedPolicyArns:
+#        - white list
+#        - black list
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: firehose.amazonaws.com
+          Action: ['sts:AssumeRole']
+          Condition:
+            StringEquals:
+              'sts:ExternalId': !Ref 'AWS::AccountId'
+      Path: /
+
+  StreamReaderPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - kinesis:Get*
+              - kinesis:DescribeStream
+            Resource: 
+              !Join
+                - ''
+                - - 'arn:aws:kinesis:'
+                  - !Ref 'AWS::Region'
+                  - ':'
+                  - !Ref 'AWS::AccountId'
+                  - ':stream/'
+                  - !Ref 'KinesisStreamName'
+      Roles:
+        - !Ref StreamReaderRole
+
+
+
+  BucketWriterPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:AbortMultipartUpload        
+              - s3:GetBucketLocation        
+              - s3:GetObject        
+              - s3:ListBucket        
+              - s3:ListBucketMultipartUploads        
+              - s3:PutObject
+            Resource:
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref ArchiveBucket
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref ArchiveBucket
+                  - '*'
+
+              
+      Roles:
+        - !Ref BucketWriterRole
+
+  EventLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        !Join
+          - ''
+          - - '/aws/kinesisfirehose/'
+            - !Ref FirehoseName
+      RetentionInDays: 14
+
+  EventLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref EventLogGroup
+      LogStreamName:
+        !Join
+          - '-'
+          - - !Ref FirehoseName
+            - LogStream
+
+  LogPutterPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - log:PutLogEvents
+            Resource: '*'
+      Roles:
+        - !Ref StreamReaderRole
+        - !Ref BucketWriterRole
+
+  Firehose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    DependsOn:
+      - StreamReaderPolicy
+      - LogPutterPolicy
+    Properties: 
+      DeliveryStreamName: !Ref FirehoseName
+      DeliveryStreamType: KinesisStreamAsSource
+      KinesisStreamSourceConfiguration: 
+        KinesisStreamARN:
+          !Join
+            - ''
+            - - 'arn:aws:kinesis:'
+              - !Ref 'AWS::Region'
+              - ':'
+              - !Ref 'AWS::AccountId'
+              - ':stream/'
+              - !Ref 'KinesisStreamName'
+        RoleARN: !GetAtt StreamReaderRole.Arn
+      S3DestinationConfiguration:
+        BucketARN:
+          !Join 
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref ArchiveBucket
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 25
+        CompressionFormat: UNCOMPRESSED
+        RoleARN: !GetAtt BucketWriterRole.Arn
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Ref EventLogGroup
+          LogStreamName: !Ref EventLogStream
+

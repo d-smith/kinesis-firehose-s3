@@ -1,0 +1,18 @@
+# Use this to create the archive bucket used with streamback2.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Create a bucket
+
+Resources:
+
+  ArchiveBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+Outputs:
+  BucketName:
+    Value: !Ref ArchiveBucket
