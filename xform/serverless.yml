@@ -1,0 +1,9 @@
+service: xform1
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+functions:
+  xt1:
+    handler: xt1.handler
