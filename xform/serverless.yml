@@ -7,3 +7,4 @@ provider:
 functions:
   xt1:
     handler: xt1.handler
+    timeout: 120

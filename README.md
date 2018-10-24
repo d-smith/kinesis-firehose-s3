@@ -9,6 +9,8 @@ This project provides two templates:
 * streamback-bucket.yml. Use this to create the bucket for the firehose destination
 * streamback.yml. Use this to create the firehose - note you will need the name of the Kinesis stream source and the name of the destination bucket to supply as parameters.
 
+For playing around with this, you might want to deploy [this](https://github.com/d-smith/kinesis-lambda-async) project and use its stream.
+
 Note that the bucket and stream do not need to be in the same region.
 
 ## Limitations

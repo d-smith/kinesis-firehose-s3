@@ -6,7 +6,7 @@ Currently, cloud formation does not support specifying a lambda to associated wi
 purposes. Post create, however, the cli can be used to specify processing to occur in the strea before it
 reaches its destination.
 
-The [CLI]() documentation states
+The [CLI](https://docs.aws.amazon.com/cli/latest/reference/firehose/update-destination.html) documentation states
 
 > If the destination type is the same, Kinesis Data Firehose merges the configuration parameters specified with the destination configuration that already exists on the delivery stream. If any of the parameters are not specified in the call, the existing values are retained.
 
@@ -32,6 +32,19 @@ The JSON for the `--extended-s3-destination-update` option includes processing c
   }
 }
 ```
+
+Create an execution policy for the lambda
+
+```console
+aws iam create-policy --policy-name fh-xform-dev --policy-document file://lambda-policy.json
+```
+Then, attach the policy to the role:
+
+```console
+aws iam attach-role-policy --role-name BucketWriterRole --policy-arn arn:aws:iam::nnn:policy/fh-xform-dev
+```
+
+Notes - wide open execution resource currently used in the policy - should refine that.
 
 ## Misc
 
