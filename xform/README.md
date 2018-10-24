@@ -14,23 +14,33 @@ The JSON for the `--extended-s3-destination-update` option includes processing c
 
 ```console
 {
-    "ProcessingConfiguration": {
-    "Enabled": true|false,
-    "Processors": [
-      {
-        "Type": "Lambda",
-        "Parameters": [
-          {
-            "ParameterName": "LambdaArn"|"NumberOfRetries"|"RoleArn"|"BufferSizeInMBs"|"BufferIntervalInSeconds",
-            "ParameterValue": "string"
-          }
-          ...
-        ]
-      }
-      ...
-    ]
-  }
+    "DeliveryStreamName": "your name",
+    "CurrentDeliveryStreamVersionId": "1",
+    "DestinationId": "destinationId-000000000001",
+   
+    "ExtendedS3DestinationUpdate": {
+        "ProcessingConfiguration": {
+            "Enabled": true,
+            "Processors": [
+                {
+                    "Type": "Lambda",
+                    "Parameters": [
+                        {
+                            "ParameterName": "LambdaArn",
+                            "ParameterValue": "arn:aws:lambda:us-east-1:<your account no>:function:xform1-dev-xt1"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
 }
+```
+
+Capture your configuration in a file (for example in `cli-update.json`) then update the destination, .e.g.
+
+```console
+aws firehose update-destination --cli-input-json file://cli-update.json
 ```
 
 Create an execution policy for the lambda
