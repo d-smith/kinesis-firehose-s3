@@ -1,2 +1,3 @@
 .serverless
 cli-update.json
+node_modules/

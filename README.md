@@ -16,3 +16,11 @@ Note that the bucket and stream do not need to be in the same region.
 ## Limitations
 
 The IAM permissions will likely need to be expanded if the KMS is used to encrypt the stream, and/or if KMS with a CMK is used to encrypt the destination bucket. 
+
+## CLI examples
+
+Create the archive bucket
+
+```console
+aws cloudformation create-stack --stack-name archiviceBucketStack --template-body file://streamback-bucket.yml
+```

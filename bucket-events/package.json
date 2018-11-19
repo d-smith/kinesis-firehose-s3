@@ -8,8 +8,8 @@
   },
   "author": "",
   "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {
+  "devDependencies": {
     "serverless-plugin-existing-s3": "^2.2.2"
-  }
+  },
+  "dependencies": {}
 }
