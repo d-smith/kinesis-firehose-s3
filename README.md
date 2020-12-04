@@ -25,8 +25,30 @@ Create the archive bucket
 aws cloudformation create-stack --stack-name archiviceBucketStack --template-body file://streamback-bucket.yml
 ```
 
+Create a Kinesis stream
+
+```
+aws kinesis create-stream --stream-name willamette --shard-count 1
+```
+
 Create the stack
 
 ```console
-aws cloudformation create-stack --stack-name archiveFirehose --template-body file://streamback.yml --parameters ParameterKey=FirehoseName,ParameterValue=archiveFH ParameterKey=KinesisStreamName,ParameterValue=K2Stream ParameterKey=ArchiveBucket,ParameterValue=archivicebucketstack-archivebucket-wuirux7vssd0 --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name archiveFirehose \
+--template-body file://streamback.yml \
+--parameters ParameterKey=FirehoseName,ParameterValue=archiveFH ParameterKey=KinesisStreamName,ParameterValue=willamette ParameterKey=ArchiveBucket,ParameterValue=archivicebucketstack-archivebucket-14gh60f5cyytn \
+--capabilities CAPABILITY_NAMED_IAM
+```
+
+Write data to the stream
+
+```
+aws kinesis put-record --stream-name willamette \
+--data eyJ0eXBlIjoiZXZlbnQxIiwgInNvdXJjZSI6ImdhcnkiLCJkYXRhIjp7ImF0dHJpYnV0ZSI6InZhbHVlIn19Cg== \
+--partition-key "xxx"
+
+
+aws kinesis put-record --stream-name willamette \
+--data ew0KICAgICJzcGVjdmVyc2lvbiIgOiAiMS4wIiwNCiAgICAidHlwZSIgOiAiY29tLmdpdGh1Yi5wdWxsLmNyZWF0ZSIsDQogICAgInNvdXJjZSIgOiAiaHR0cHM6Ly9naXRodWIuY29tL2Nsb3VkZXZlbnRzL3NwZWMvcHVsbCIsDQogICAgInN1YmplY3QiIDogIjEyMyIsDQogICAgImlkIiA6ICJBMjM0LTEyMzQtMTIzNCIsDQogICAgInRpbWUiIDogIjIwMTgtMDQtMDVUMTc6MzE6MDBaIiwNCiAgICAiY29tZXhhbXBsZWV4dGVuc2lvbjEiIDogInZhbHVlIiwNCiAgICAiY29tZXhhbXBsZW90aGVydmFsdWUiIDogNSwNCiAgICAiZGF0YWNvbnRlbnR0eXBlIiA6ICJ0ZXh0L3htbCIsDQogICAgImRhdGEiIDogIjxtdWNoIHdvdz1cInhtbFwiLz4iDQp9 \
+--partition-key "xxx"
 ```

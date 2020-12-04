@@ -2,7 +2,7 @@ service: xform1
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
 
 functions:
   xt1:
