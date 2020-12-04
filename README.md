@@ -24,3 +24,9 @@ Create the archive bucket
 ```console
 aws cloudformation create-stack --stack-name archiviceBucketStack --template-body file://streamback-bucket.yml
 ```
+
+Create the stack
+
+```console
+aws cloudformation create-stack --stack-name archiveFirehose --template-body file://streamback.yml --parameters ParameterKey=FirehoseName,ParameterValue=archiveFH ParameterKey=KinesisStreamName,ParameterValue=K2Stream ParameterKey=ArchiveBucket,ParameterValue=archivicebucketstack-archivebucket-wuirux7vssd0 --capabilities CAPABILITY_NAMED_IAM
+```
