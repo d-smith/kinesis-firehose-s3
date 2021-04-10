@@ -52,3 +52,15 @@ aws kinesis put-record --stream-name willamette \
 --data ew0KICAgICJzcGVjdmVyc2lvbiIgOiAiMS4wIiwNCiAgICAidHlwZSIgOiAiY29tLmdpdGh1Yi5wdWxsLmNyZWF0ZSIsDQogICAgInNvdXJjZSIgOiAiaHR0cHM6Ly9naXRodWIuY29tL2Nsb3VkZXZlbnRzL3NwZWMvcHVsbCIsDQogICAgInN1YmplY3QiIDogIjEyMyIsDQogICAgImlkIiA6ICJBMjM0LTEyMzQtMTIzNCIsDQogICAgInRpbWUiIDogIjIwMTgtMDQtMDVUMTc6MzE6MDBaIiwNCiAgICAiY29tZXhhbXBsZWV4dGVuc2lvbjEiIDogInZhbHVlIiwNCiAgICAiY29tZXhhbXBsZW90aGVydmFsdWUiIDogNSwNCiAgICAiZGF0YWNvbnRlbnR0eXBlIiA6ICJ0ZXh0L3htbCIsDQogICAgImRhdGEiIDogIjxtdWNoIHdvdz1cInhtbFwiLz4iDQp9 \
 --partition-key "xxx"
 ```
+
+## Renamed Default Branch
+
+The default branch for this repository has been updated, as per [this documentation](https://docs.github.com/en/github/administering-a-repository/renaming-a-branch).
+
+To update a local copy of the repository:
+
+```
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+```
