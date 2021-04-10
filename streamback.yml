@@ -21,8 +21,8 @@ Resources:
     Properties:
       RoleName: StreamReaderRole
 #      ManagedPolicyArns:
-#        - white list
-#        - black list
+#        - allow list
+#        - deny list
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -40,8 +40,8 @@ Resources:
     Properties:
       RoleName: BucketWriterRole
 #      ManagedPolicyArns:
-#        - white list
-#        - black list
+#        - allow list
+#        - deny list
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
